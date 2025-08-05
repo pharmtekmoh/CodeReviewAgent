@@ -1,8 +1,8 @@
 import sqlite3
 import hashlib
 import logging
-from ..utils.database import get_db_connection
-from ..models.user import User
+from src.utils.database import get_db_connection
+from src.models.user import User
 
 def create_user(username, password, role):
     """Creates a new user with a hashed password."""

@@ -1,7 +1,7 @@
 import sqlite3
 import logging
-from ..utils.database import get_db_connection
-from ..models.patient import Patient
+from src.utils.database import get_db_connection
+from src.models.patient import Patient
 
 def add_patient(name: str, address: str, phone: str):
     """Adds a new patient to the database."""

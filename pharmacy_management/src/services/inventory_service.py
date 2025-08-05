@@ -1,7 +1,7 @@
 import sqlite3
 import logging
-from ..utils.database import get_db_connection
-from ..models.medicine import Medicine
+from src.utils.database import get_db_connection
+from src.models.medicine import Medicine
 from datetime import date
 
 def add_medicine(name: str, manufacturer: str, price: float, quantity: int, expiry_date: date, supplier_id: int):

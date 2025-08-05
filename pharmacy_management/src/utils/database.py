@@ -5,25 +5,26 @@ import os
 # The root directory of the project, which is 'pharmacy_management'
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 
-def get_db_connection():
+def get_db_connection(db_path=None):
     """Establishes a connection to the database."""
-    config = configparser.ConfigParser()
-    config_path = os.path.join(BASE_DIR, 'config.ini')
-    config.read(config_path)
+    if not db_path:
+        config = configparser.ConfigParser()
+        config_path = os.path.join(BASE_DIR, 'config.ini')
+        config.read(config_path)
 
-    db_path_relative = config['Database']['path']
-    db_path_absolute = os.path.join(BASE_DIR, db_path_relative)
+        db_path_relative = config['Database']['path']
+        db_path = os.path.join(BASE_DIR, db_path_relative)
 
     # Ensure the data directory exists
-    os.makedirs(os.path.dirname(db_path_absolute), exist_ok=True)
+    os.makedirs(os.path.dirname(db_path), exist_ok=True)
 
-    conn = sqlite3.connect(db_path_absolute)
+    conn = sqlite3.connect(db_path)
     conn.row_factory = sqlite3.Row
     return conn
 
-def create_tables():
+def create_tables(db_path=None):
     """Creates all the necessary tables in the database."""
-    conn = get_db_connection()
+    conn = get_db_connection(db_path)
     cursor = conn.cursor()
 
     # User table

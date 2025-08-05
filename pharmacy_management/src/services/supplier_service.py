@@ -1,7 +1,7 @@
 import sqlite3
 import logging
-from ..utils.database import get_db_connection
-from ..models.supplier import Supplier
+from src.utils.database import get_db_connection
+from src.models.supplier import Supplier
 
 def add_supplier(name: str, contact_person: str, phone: str, address: str):
     """Adds a new supplier to the database."""

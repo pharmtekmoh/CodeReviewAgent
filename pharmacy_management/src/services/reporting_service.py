@@ -2,8 +2,8 @@ import sqlite3
 import logging
 import csv
 from datetime import date
-from ..utils.database import get_db_connection
-from ..models.sale import Sale, SaleItem
+from src.utils.database import get_db_connection
+from src.models.sale import Sale, SaleItem
 
 def get_sales_by_user(user_id: int):
     """Retrieves all sales made by a specific user."""

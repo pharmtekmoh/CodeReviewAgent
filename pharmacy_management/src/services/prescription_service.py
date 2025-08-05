@@ -1,8 +1,8 @@
 import sqlite3
 import logging
 from datetime import date
-from ..utils.database import get_db_connection
-from ..models.prescription import Prescription
+from src.utils.database import get_db_connection
+from src.models.prescription import Prescription
 
 def create_prescription(patient_id: int, doctor_name: str, medicine_id: int, quantity: int, prescription_date: date):
     """Creates a new prescription."""

@@ -2,8 +2,8 @@ import sqlite3
 import logging
 from datetime import datetime
 from typing import List
-from ..utils.database import get_db_connection
-from ..models.sale import Sale, SaleItem
+from src.utils.database import get_db_connection
+from src.models.sale import Sale, SaleItem
 
 def create_sale(user_id: int, items: List[SaleItem]):
     """Creates a new sale, updating inventory in a single transaction."""
