@@ -41,11 +41,12 @@ def get_medicine_by_id(medicine_id: int):
         )
     return None
 
-def get_all_medicines():
-    """Retrieves all medicines from the inventory."""
+def get_all_medicines(page: int = 1, page_size: int = 10):
+    """Retrieves a paginated list of all medicines from the inventory."""
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM medicines")
+    offset = (page - 1) * page_size
+    cursor.execute("SELECT * FROM medicines LIMIT ? OFFSET ?", (page_size, offset))
     medicines_data = cursor.fetchall()
     conn.close()
     return [
@@ -58,6 +59,15 @@ def get_all_medicines():
             expiry_date=date.fromisoformat(med['expiry_date'])
         ) for med in medicines_data
     ]
+
+def get_total_medicines_count():
+    """Returns the total number of medicines in the inventory."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) as count FROM medicines")
+    result = cursor.fetchone()
+    conn.close()
+    return result['count'] if result else 0
 
 def update_medicine_details(medicine_id: int, price: float, quantity: int):
     """Updates a medicine's price and quantity."""
@@ -97,6 +107,30 @@ def delete_medicine(medicine_id: int):
         conn.close()
 
 from datetime import timedelta
+
+def search_medicines(term: str):
+    """Searches for medicines by name or manufacturer."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    try:
+        search_term = f"%{term}%"
+        cursor.execute("SELECT * FROM medicines WHERE name LIKE ? OR manufacturer LIKE ?", (search_term, search_term))
+        medicines_data = cursor.fetchall()
+        return [
+            Medicine(
+                id=med['id'],
+                name=med['name'],
+                manufacturer=med['manufacturer'],
+                price=med['price'],
+                quantity=med['quantity'],
+                expiry_date=date.fromisoformat(med['expiry_date'])
+            ) for med in medicines_data
+        ]
+    except sqlite3.Error as e:
+        logging.error(f"Error searching for medicines with term '{term}': {e}")
+        return []
+    finally:
+        conn.close()
 
 def get_low_stock_medicines(threshold: int):
     """Retrieves medicines with quantity below a given threshold."""

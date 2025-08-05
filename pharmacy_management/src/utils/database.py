@@ -93,6 +93,21 @@ def create_tables():
     );
     """)
 
+    # Prescription table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS prescriptions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        patient_id INTEGER NOT NULL,
+        doctor_name TEXT NOT NULL,
+        medicine_id INTEGER NOT NULL,
+        quantity INTEGER NOT NULL,
+        prescription_date TEXT NOT NULL,
+        filled INTEGER NOT NULL DEFAULT 0,
+        FOREIGN KEY (patient_id) REFERENCES patients (id),
+        FOREIGN KEY (medicine_id) REFERENCES medicines (id)
+    );
+    """)
+
     conn.commit()
     conn.close()
     print("Tables created successfully.")

@@ -118,31 +118,3 @@ def get_all_sales():
 
     conn.close()
     return sales
-
-def get_sales_by_date_range(start_date: date, end_date: date):
-    """Retrieves all sales within a given date range."""
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    start_str = start_date.isoformat()
-    end_str = end_date.isoformat()
-
-    cursor.execute("SELECT * FROM sales WHERE date(timestamp) BETWEEN ? AND ?", (start_str, end_str))
-    sales_data = cursor.fetchall()
-
-    sales = []
-    for sale_data in sales_data:
-        sale_id = sale_data['id']
-        cursor.execute("SELECT * FROM sale_items WHERE sale_id = ?", (sale_id,))
-        items_data = cursor.fetchall()
-        items = [SaleItem(medicine_id=item['medicine_id'], quantity=item['quantity']) for item in items_data]
-
-        sales.append(Sale(
-            id=sale_id,
-            timestamp=datetime.fromisoformat(sale_data['timestamp']),
-            user_id=sale_data['user_id'],
-            items=items
-        ))
-
-    conn.close()
-    return sales

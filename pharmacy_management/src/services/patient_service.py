@@ -38,11 +38,12 @@ def get_patient_by_id(patient_id: int):
         )
     return None
 
-def get_all_patients():
-    """Retrieves all patients from the database."""
+def get_all_patients(page: int = 1, page_size: int = 10):
+    """Retrieves a paginated list of all patients from the database."""
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM patients")
+    offset = (page - 1) * page_size
+    cursor.execute("SELECT * FROM patients LIMIT ? OFFSET ?", (page_size, offset))
     patients_data = cursor.fetchall()
     conn.close()
     return [
@@ -53,6 +54,15 @@ def get_all_patients():
             phone=patient['phone']
         ) for patient in patients_data
     ]
+
+def get_total_patients_count():
+    """Returns the total number of patients."""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("SELECT COUNT(*) as count FROM patients")
+    result = cursor.fetchone()
+    conn.close()
+    return result['count'] if result else 0
 
 def update_patient_details(patient_id: int, address: str, phone: str):
     """Updates a patient's address and phone number."""
