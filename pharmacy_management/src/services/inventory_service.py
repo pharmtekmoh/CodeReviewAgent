@@ -3,6 +3,7 @@ import logging
 from src.utils.database import get_db_connection
 from src.models.medicine import Medicine
 from datetime import date
+from . import audit_service
 
 def add_medicine(name: str, manufacturer: str, price: float, quantity: int, expiry_date: date, supplier_id: int):
     """Adds a new medicine to the inventory."""

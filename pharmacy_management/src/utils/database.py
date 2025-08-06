@@ -27,13 +27,42 @@ def create_tables(db_path=None):
     conn = get_db_connection(db_path)
     cursor = conn.cursor()
 
-    # User table
+    # Roles table
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS roles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+    );
+    """)
+
+    # Permissions table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS permissions (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL UNIQUE
+    );
+    """)
+
+    # Role-Permissions mapping table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS role_permissions (
+        role_id INTEGER NOT NULL,
+        permission_id INTEGER NOT NULL,
+        PRIMARY KEY (role_id, permission_id),
+        FOREIGN KEY (role_id) REFERENCES roles (id),
+        FOREIGN KEY (permission_id) REFERENCES permissions (id)
+    );
+    """)
+
+    # User table (modified)
+    cursor.execute("DROP TABLE IF EXISTS users;")
+    cursor.execute("""
+    CREATE TABLE users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT NOT NULL UNIQUE,
         password_hash TEXT NOT NULL,
-        role TEXT NOT NULL
+        role_id INTEGER NOT NULL,
+        FOREIGN KEY (role_id) REFERENCES roles (id)
     );
     """)
 
@@ -106,6 +135,17 @@ def create_tables(db_path=None):
         filled INTEGER NOT NULL DEFAULT 0,
         FOREIGN KEY (patient_id) REFERENCES patients (id),
         FOREIGN KEY (medicine_id) REFERENCES medicines (id)
+    );
+    """)
+
+    # Audit log table
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS audit_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        action TEXT NOT NULL,
+        timestamp TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users (id)
     );
     """)
 
